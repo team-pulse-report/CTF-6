@@ -2,4 +2,3 @@
 # so nothing here is normally created; kept as a guard).
 docker-web/**/__pycache__/
 *.pyc
-docker-web/app/__pycache__/
