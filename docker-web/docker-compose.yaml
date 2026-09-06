@@ -1,0 +1,18 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: app.Dockerfile
+        container_name: app
+        restart: unless-stopped
+        dns:
+            - 1.1.1.1
+            - 1.0.0.1
+        ports:
+            - "8080:8080"
+            - "23:22"
+        volumes:
+            # Misconfiguration: the outer Docker socket is mounted inside this
+            # container. Root here can drive the outer engine and break out to
+            # the outer host filesystem.
+            - /var/run/docker.sock:/var/run/docker.sock

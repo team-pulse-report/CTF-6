@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trent Identity Gateway</title>
+    <style>
+        body {
+            background-color: #0f1115;
+            color: #d7dce2;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background-color: #171a21;
+            padding: 32px;
+            border-radius: 10px;
+            box-shadow: 0 0 18px rgba(0, 0, 0, 0.6);
+            width: 320px;
+        }
+        h1 { font-size: 20px; margin: 0 0 4px; color: #ffffff; }
+        .sub { font-size: 13px; color: #8b93a1; margin-bottom: 20px; }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #2a2f3a;
+            border-radius: 6px;
+            background-color: #0f1115;
+            color: #d7dce2;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            background-color: #3b82f6;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        button:hover { background-color: #2f6fd6; }
+        .demo { font-size: 12px; color: #6b7280; margin-top: 16px; }
+        pre {
+            background: #0f1115;
+            border: 1px solid #2a2f3a;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #9aa4b2;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Trent Identity Gateway</h1>
+        <div class="sub">Token service (HS256). Sign in to receive an access token.</div>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username" autocomplete="off">
+            <input type="password" id="password" placeholder="Password" autocomplete="off">
+            <button type="submit">Sign in</button>
+        </form>
+        <div class="demo">Demo access is open: guest / guest.</div>
+        <pre id="out"></pre>
+    </div>
+
+    <!--
+      dev note: the token service still signs with the placeholder HMAC key from
+      the original bootstrap. it was picked off a common wordlist for testing and
+      never rotated. move JWT_SECRET to a managed high-entropy key before launch.
+      admin tooling lives at /api/admin and trusts the role claim in the token.
+    -->
+    <script>
+        const form = document.getElementById('loginForm');
+        const out = document.getElementById('out');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value,
+                }),
+            });
+            const data = await res.json();
+            out.textContent = JSON.stringify(data, null, 2);
+        });
+    </script>
+</body>
+</html>

