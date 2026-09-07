@@ -3,7 +3,7 @@ FROM ubuntu:24.04
 # Outer host: its own Docker engine plus SSH. The engine deploys the inner stack
 # at runtime.
 RUN apt-get update \
-    && apt-get install -y docker.io docker-compose-v2 openssh-server nano \
+    && apt-get install -y docker.io docker-compose-v2 openssh-server \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /var/lib/docker /run/sshd \
@@ -12,7 +12,7 @@ RUN apt-get update \
     && ssh-keygen -A \
     && useradd -m -s /bin/bash victor \
     && echo -n "victor:ctHzaZo5HbNrUCPfBLH1HZ4n" | chpasswd \
-    && userdel ubuntu \
+    && userdel -r ubuntu \
     && sed -i 's#/bin/sh#/bin/bash#' /etc/passwd \
     && ln -sf /dev/null /root/.bash_history \
     && ln -sf /dev/null /home/victor/.bash_history

@@ -31,11 +31,17 @@ SSH.
 ## Stage 2 - Crack the MD5 and enter the web container (second inner flag)
 
 - The admin console lists unsalted MD5 hashes. `mallory` is
-  `f25a2fc72690b780b2a14e140ef6a9e0`, which reverses to `iloveyou` (a rockyou
-  entry; verify with `printf '%s' iloveyou | md5`). The `admin` hash is
+  `15cf0ae3726fdf8505b199e968106d68`, which reverses to `velvet123` (a rockyou
+  entry; verify with `printf '%s' velvet123 | md5`). The `admin` hash is
   high-entropy and does not crack (red herring).
-- `iloveyou` is also mallory's SSH password on the web container, published on
+- `velvet123` is also mallory's SSH password on the web container, published on
   port 23: `ssh mallory@TARGET -p 23`.
+- The admin console is the only practical source of this credential. `velvet123`
+  sits at roughly rockyou line 330,000, deep enough that a naive online top-N SSH
+  brute against port 23 (top-500/1000/10k lists) does not reach it, while an
+  offline crack of the unsalted MD5 against full rockyou or a crackstation lookup
+  recovers it instantly. So the forged admin JWT (Stage 1) is a required first
+  step, not an optional one, for every inner-container flag.
 - `cat ~/user.txt` gives the second `FLAG{...}`.
 
 ## Stage 3 - Web-container root (themed inner-root flag)
@@ -67,11 +73,21 @@ SSH.
 - It discloses `victor`'s initial SSH password. Log in to the outer host:
   `ssh victor@TARGET -p 22`.
 - `cat ~/user.txt` gives the outer-host `MAIN_FLAG{...}` user flag.
+- Honesty note: the mounted `docker.sock` from Stage 4 is a full outer-root
+  primitive, so the outer-user flag is also directly readable without SSH:
+  `docker run --rm -v /:/host alpine cat /host/home/victor/user.txt`. The
+  onboarding-note recovery and the `ssh victor` login are documented for
+  completeness and realism; they gate nothing that the root mount does not already
+  grant.
 
 ## Notes and red herrings
 
 - The `admin` MD5 in the password store is a rotated high-entropy value and does
   not crack.
+- `mallory`'s SSH password is intentionally a rockyou entry (line ~330,000) so
+  the offline MD5 crack works instantly, but one deep enough that an online top-N
+  brute against port 23 is not a shortcut around the JWT forge. Do not expect the
+  top common passwords, or a top-10k list, to hit.
 - `victor`'s password is high-entropy and is not meant to be cracked; it is
   recovered by reading a root-only file after the socket breakout.
 - `/api/whoami` is a convenience endpoint for inspecting token claims; it is not

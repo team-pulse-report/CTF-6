@@ -25,11 +25,13 @@ STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 DEMO_ACCOUNTS = {"guest": "guest"}
 
 # Password store surfaced by the admin console. Hashes are unsalted MD5, which
-# is the second weakness: mallory's hash reverses to her real SSH password.
+# is the second weakness: mallory's hash reverses to her real SSH password. This
+# MD5 MUST stay in sync with the chpasswd value in app.Dockerfile; it is the MD5
+# of mallory's SSH password.
 USER_RECORDS = [
     {
         "username": "mallory",
-        "hash": "f25a2fc72690b780b2a14e140ef6a9e0",
+        "hash": "15cf0ae3726fdf8505b199e968106d68",
         "algo": "md5",
         "note": "legacy operator account, unsalted import from the old panel",
     },

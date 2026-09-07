@@ -56,6 +56,14 @@ challenge itself is unaffected.
 - The intended solution path is documented, for maintainers, in
   `docs/WALKTHROUGH.md`. It is a spoiler; do not open it if you want to play.
 
+## A note on committed secrets
+
+This repository intentionally ships disposable challenge secrets (the JWT signing
+word, `mallory`'s and `victor`'s passwords, the MD5 hash in the admin store, and
+the flag files). They are challenge content, not leaked credentials, and are not
+used anywhere outside this challenge. A secret scanner will flag them; that is
+expected and no rotation is required.
+
 ## Credits
 
 This is an original challenge, inspired by the Himanshukr000/CTF-DOCKERS
